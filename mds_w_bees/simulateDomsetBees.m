@@ -1,4 +1,4 @@
-function [vec, pInt] = simulateDomsetBees(N,varargin)
+ffunction [vec, pInt] = simulateDomsetBees(N,varargin)
 
 %% initialize
 global casu_pos
@@ -35,7 +35,7 @@ start_heat = 0.1;
 stop_cool = 0.5;
 start_cool = 0.2;
 
-blow = zeros(length(N),1);
+blow = zeros(size(N));
 draw = 0;
 
 %% Prepare figure for bee simulation
@@ -66,9 +66,9 @@ for i = 1 : n
     
     for b_i = 1 : length(N)
         if T(b_i)<= 26
-            blow(b_i) = 1;
+            blow(b_i,:) = 1;
         else
-            blow(b_i) = 0;
+            blow(b_i,:) = 0;
         end    
     end
     
