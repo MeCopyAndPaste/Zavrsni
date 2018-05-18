@@ -34,7 +34,11 @@ start_heat = 0;
 stop_cool = 0.5;
 start_cool = 0.1;
 
-blow = zeros(length(N),1);
+blow_off_time = 50;
+stop_blow = 0.5;
+start_blow = 0.1;
+blow = zeros(size(N));
+
 draw = 1;
 
 %% Prepare figure for bee simulation
@@ -63,15 +67,7 @@ end
 for i = 1 : n
     iPair = 0;
     
-    for b_i = 1 : length(N)
-        if T(b_i)<= 26
-            blow(b_i) = 1;
-        else
-            blow(b_i) = 0;
-        end    
-    end
-    disp('blow');
-    disp(blow);
+   
     for iSmaller = 1 : length(N)
         for iLarger = iSmaller + 1 : length(N)
             if N(iSmaller,iLarger) == 1
@@ -135,6 +131,7 @@ for i = 1 : n
     for iNode = 1 : length(N)
         maxP(iNode) = max(P(iNode, N(iNode, :)==1));
         avgP(iNode) = mean(P(iNode, N(iNode, :)==1));
+        minP(iNode) = min(P(iNode, N(iNode, :)==1));
     end
 %     maxP
 %     avgP
@@ -143,15 +140,26 @@ for i = 1 : n
     
     progress_smooth_heat = 1 - exp(0.17 * (1 - 1 / (1 - i / n)));
     progress_smooth_cool = 1 - exp(0.55 * (1 - 1 / (1 - i / n)));
+    progress_smooth_blow = 1 - exp(0.55 * (1 - 1 / (1 - i / n)));
     
     scaling_heat = (1-progress_smooth_heat) * start_heat + stop_heat * progress_smooth_heat;
     scaling_cool = (1-progress_smooth_cool) * start_cool + stop_cool * progress_smooth_cool;
+    scaling_blow = (1-progress_smooth_blow) * start_blow + stop_blow * progress_smooth_blow;
+    
+    if i > blow_off_time
+        blow(:,1)=transpose(minP<scaling_blow);
+    else
+        blow(:,1)=transpose(zeros(length(blow),1));
+    end
+     
     
     heat_float = heat_float * (1-rho) + (avgP > scaling_heat | ctrl') * rho;
     heat = heat_float > 0.5;
     
     cool_float = cool_float * (1-rho) + (maxP < scaling_cool .* (heat == 0)) * rho;
     cool = cool_float > 0.5;
+    
+
 %     figure(5)
 %     for iCrt = 1 : 4
 %         subplot(4,5,(iCrt-1)*5 + 1)
@@ -201,7 +209,9 @@ for i = 1 : n
     
     for c = 1 : length(N)
         T(c,:) = T(c,1);
+        blow(c,:) = blow(c,1);
     end
+    
  end
 
 % col = {[0 0.4470 0.7410];

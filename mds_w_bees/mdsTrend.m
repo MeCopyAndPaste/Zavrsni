@@ -58,10 +58,10 @@ for iRho = 0 : 0
             axis([1, n, 26, 36])
         end
     end
-    disp(strcat('graph: ', num2str(iGraph), ', rho = ', num2str(rho)));
-    disp(strcat('cor:',num2str(correct),',so:',num2str(subopt),',inc:',num2str(incorrect)))
-    disp(strcat('mean: ',num2str(mean(suboptStats)), ', var: ', num2str(var(suboptStats))))
-    disp('--------------------------------')
+%    disp(strcat('graph: ', num2str(iGraph), ', rho = ', num2str(rho)));
+%   disp(strcat('cor:',num2str(correct),',so:',num2str(subopt),',inc:',num2str(incorrect)))
+%    disp(strcat('mean: ',num2str(mean(suboptStats)), ', var: ', num2str(var(suboptStats))))
+%    disp('--------------------------------')
 %     subplot(3,1,1)
 %     scatter(iRho, correct/iter);
 %     axis([-1,11,0,1])

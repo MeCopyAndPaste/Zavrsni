@@ -3,10 +3,10 @@ function [N, mds] = chooseGraph(i)
 switch i
     case 1
         N = [0 1 0 1 0;
-            1 0 1 0 1;
-            0 1 0 0 0;
-            1 0 0 0 1;
-            0 1 0 1 0];
+             1 0 1 0 1;
+             0 1 0 0 0;
+             1 0 0 0 1;
+             0 1 0 1 0];
         mds = 2;
     case 2
         N = [0 1 0;

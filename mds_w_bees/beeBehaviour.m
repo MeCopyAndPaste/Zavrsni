@@ -7,10 +7,6 @@ posD = randn(time, nBees);
 posA = randn(time, nBees);
 vel = randn(time, nBees);
 
-%
-blow = [0 0];
-
-
 Ts = [28, 28; 30, 28; 27, 32];
 k = 1; 
 trigger = 0;
@@ -39,11 +35,9 @@ set(mTextBox2,'Position',[350,330,100,15]);
 for iTime = 1 : time-1
     if iTime == 100
         Tr = Ts(2,:);
-        blow = [1, 0];
     end
     if iTime == 300
         Tr = Ts(3,:);
-        %blow = [0, 0];
     end
     
     for i = 1 : 2
@@ -51,15 +45,14 @@ for iTime = 1 : time-1
             T(i) = T(i) + dT * sign(Tr(i) - T(i));
         end
     end
-    T = [36, 26];
+
     
-    [posD(iTime+1,:),posA(iTime+1,:),vel(iTime+1,:)] = beeSimulation_mod3...
+    [posD(iTime+1,:),posA(iTime+1,:),vel(iTime+1,:)] = beeSimulation...
         (posD(iTime,:),...
         posA(iTime,:),...
         vel(iTime,:),...
         T, ...
-        1, ...
-        blow);
+        1);
 
     delete(findall(fi,'Tag','time_tag'));
     str = sprintf('t = %.1f', (iTime));
