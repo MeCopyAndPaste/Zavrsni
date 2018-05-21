@@ -35,7 +35,7 @@ start_heat = 0.1;
 stop_cool = 0.5;
 start_cool = 0.2;
 
-blow_off_time = 50;
+blow_off_time = 100;
 stop_blow = 0.2;
 start_blow = 0.05;
 blow = zeros(size(N));
