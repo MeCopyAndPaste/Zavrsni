@@ -36,8 +36,8 @@ stop_cool = 0.5;
 start_cool = 0.2;
 
 blow_off_time = 50;
-stop_blow = 0.5;
-start_blow = 0.1;
+stop_blow = 0.2;
+start_blow = 0.05;
 blow = zeros(size(N));
 
 draw = 0;
@@ -135,8 +135,9 @@ for i = 1 : n
     end
     
     progress_smooth_heat = 1 - exp(0.17 * (1 - 1 / (1 - min(1, 3 * i / n ))));
-    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n))));
-    progress_smooth_blow = 1 - exp(0.55 * (1 - 1 / (1 - i / n)));
+    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n) )));
+    progress_smooth_blow = (1 - exp(0.55 * (1 - 1 / (1 - min(1, 2 * i / n )))));
+    
     
     scaling_heat = (1-progress_smooth_heat) * start_heat + stop_heat * progress_smooth_heat;
     scaling_cool = (1-progress_smooth_cool) * start_cool + stop_cool * progress_smooth_cool;
@@ -164,6 +165,13 @@ for i = 1 : n
         T(c,:) = T(c,1);
         blow(c,:) = blow(c,1);
     end
+    
+    %disp('blow =')
+    %disp(blow)
+    %disp('minP =')
+    %disp(minP)
+    %disp('scaling_blow =')
+    %disp(scaling_blow )
 end
 
 pInt = pInt / n;

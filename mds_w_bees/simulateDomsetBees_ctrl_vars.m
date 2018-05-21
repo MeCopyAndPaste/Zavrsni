@@ -141,8 +141,8 @@ for i = 1 : n
     avg_overall = [avg_overall; avgP];
     
     progress_smooth_heat = 1 - exp(0.17 * (1 - 1 / (1 - min(1, 3 * i / n ))));
-    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n))));
-    progress_smooth_blow = 1 - exp(0.55 * (1 - 1 / (1 - i / n)));
+    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n) )));
+    progress_smooth_blow = 1 - exp(0.1 * (1 - 1 / (1 - min(1, 2 * i / n ))));
     
     scaling_heat = (1-progress_smooth_heat) * start_heat + stop_heat * progress_smooth_heat;
     scaling_cool = (1-progress_smooth_cool) * start_cool + stop_cool * progress_smooth_cool;
