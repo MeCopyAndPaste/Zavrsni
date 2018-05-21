@@ -38,7 +38,7 @@ start_cool = 0.2;
 max_overall = [];
 avg_overall = [];
 
-blow_off_time = 50;
+blow_off_time = 100;
 stop_blow = 0.5;
 start_blow = 0.1;
 blow = zeros(size(N));
