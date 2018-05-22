@@ -43,7 +43,7 @@ for iTime = 1 : time-1
     end
     if iTime == 300
         Tr = Ts(3,:);
-        blow = [0, 1];
+        %blow = [0, 0];
     end
     
     for i = 1 : 2

@@ -1,4 +1,4 @@
-function [vec, pInt] = arena2SimulateDraw(N,varargin)
+function [vec, pInt] = simulateDomsetBees2(N,varargin)
 
 %% initialize
 global casu_pos
@@ -35,10 +35,12 @@ start_heat = 0.1;
 stop_cool = 0.5;
 start_cool = 0.2;
 
-blow_off_time = 50;
-stop_blow = 0.2;
-start_blow = 0.05;
+
+blowbuff = [];
+blow_start = [];
 blow = zeros(size(N));
+
+minPbuff = [];
 
 draw = 0;
 
@@ -79,7 +81,7 @@ for i = 1 : n
                     if draw
                         fi = figure(iPair);
                     end
-                    [posD(iPair,:),posA(iPair,:),vel(iPair,:)] = beeSimulation_mod3...
+                    [posD(iPair,:),posA(iPair,:),vel(iPair,:)] = beeSimulation2...
                         (posD(iPair,:),...
                         posA(iPair,:),...
                         vel(iPair,:),...
@@ -134,21 +136,55 @@ for i = 1 : n
         minP(iNode) = min(P(iNode, N(iNode, :)==1));
     end
     
+% lines 140 to 151 for testing purposes only    
+%     if i > 80
+%        minP = 0.5*ones(length(N));
+%        minP = minP(1, :);
+%     end
+%     if i > 110
+%        minP = 0*ones(length(N));
+%        minP = minP(1, :);
+%     end 
+%     if i > 150
+%        minP = 0.5*ones(length(N));
+%        minP = minP(1, :);
+%     end
+
     progress_smooth_heat = 1 - exp(0.17 * (1 - 1 / (1 - min(1, 3 * i / n ))));
     progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n) )));
-    progress_smooth_blow = (1 - exp(0.55 * (1 - 1 / (1 - min(1, 2 * i / n )))));
+    %progress_smooth_blow = 1 - exp(0.5 * (1 - 1 / (1 - min(1, 2 * i / n ))));
     
     
     scaling_heat = (1-progress_smooth_heat) * start_heat + stop_heat * progress_smooth_heat;
     scaling_cool = (1-progress_smooth_cool) * start_cool + stop_cool * progress_smooth_cool;
-    scaling_blow = (1-progress_smooth_blow) * start_blow + stop_blow * progress_smooth_blow;
+    %scaling_blow = (1-progress_smooth_blow) * start_blow + stop_blow * progress_smooth_blow;
     
-    if i > blow_off_time
-        blow(:,1)=transpose(minP<scaling_blow);
-    else
-        blow(:,1)=transpose(zeros(length(blow),1));
+    
+    
+    minPbuff  = [minPbuff; minP];
+    blowbuff  = [blowbuff; transpose(blow(:,1))];
+    blow_start= [blow_start; 0*minP];
+    %    t > 5 min     t < 15 min  after simulation start
+    if ( i > 60 )
+        for blowi = 1:length(N)
+            if (blowbuff( i , blowi) == 1) && (blowbuff( i-1 , blowi) == 0)
+                blow_start( i, blowi) = 1;
+            else    
+                blow_start( i, blowi) = 0;
+            end
+        end
     end
-
+    if ( i >= 60 ) && ( i <= 180 ) 
+        for blowi = 1:length(N)
+            minPcomp = max(minPbuff((i-12):i,blowi)); 
+            blow(blowi,1)= (minPcomp < 0.2) || ( sum(blow_start((i-18):i,blowi)) ~= 0);
+            blow_start(i, blowi) = (minPcomp < 0.2) && ( sum(blow_start((i-18):i,blowi)) ~= 0);
+        end
+    else
+        blow = zeros(size(N));
+    end
+    
+    
     cool_float = cool_float * (1-rho) + (maxP < scaling_cool .* (ctrl > 0)') * rho;
     cool = cool_float > 0.5;
     
@@ -166,14 +202,18 @@ for i = 1 : n
         blow(c,:) = blow(c,1);
     end
     
-    %disp('blow =')
-    %disp(blow)
-    %disp('minP =')
-    %disp(minP)
-    %disp('scaling_blow =')
-    %disp(scaling_blow )
 end
-
+%     ploton = 1;
+%     if ploton
+%     figure(99);
+%     hold on;
+%         for znj = 1 :length(N)
+%                     subplot(length(N),1, znj);
+%                     plot(1:n,blowbuff(1:n,znj),1:i,minPbuff(1:n,znj));
+% 
+%         end
+%     hold off;   
+%     end
 pInt = pInt / n;
 
 end

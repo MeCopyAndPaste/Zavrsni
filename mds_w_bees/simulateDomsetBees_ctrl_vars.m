@@ -38,6 +38,11 @@ start_cool = 0.2;
 max_overall = [];
 avg_overall = [];
 
+blow_off_time = 50;
+stop_blow = 0.5;
+start_blow = 0.1;
+blow = zeros(size(N));
+
 draw = 0;
 
 %% Prepare figure for bee simulation
@@ -71,17 +76,18 @@ for i = 1 : n
             if N(iSmaller,iLarger) == 1
                 iPair = iPair + 1;
                 Tsubarena = [T(iSmaller),T(iLarger)];
+                blowsubarena = [blow(iSmaller),blow(iLarger)];
                 %% move bees k times
                 for iTime = 1 : k
                     if draw
                         fi = figure(iPair);
                     end
-                    [posD(iPair,:),posA(iPair,:),vel(iPair,:)] = beeSimulation...
+                    [posD(iPair,:),posA(iPair,:),vel(iPair,:)] = beeSimulation_mod3...
                         (posD(iPair,:),...
                         posA(iPair,:),...
                         vel(iPair,:),...
                         Tsubarena, ...
-                        draw);
+                        draw, blowsubarena);
                     %% update plot info
                     if draw
                         title(num2str(iPair));
@@ -128,17 +134,26 @@ for i = 1 : n
     for iNode = 1 : length(N)
         maxP(iNode) = max(P(iNode, N(iNode, :)==1));
         avgP(iNode) = mean(P(iNode, N(iNode, :)==1));
+        minP(iNode) = min(P(iNode, N(iNode, :)==1));
     end
     
     max_overall = [max_overall; maxP];
     avg_overall = [avg_overall; avgP];
     
     progress_smooth_heat = 1 - exp(0.17 * (1 - 1 / (1 - min(1, 3 * i / n ))));
-    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n))));
+    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n) )));
+    progress_smooth_blow = 1 - exp(0.1 * (1 - 1 / (1 - min(1, 2 * i / n ))));
     
     scaling_heat = (1-progress_smooth_heat) * start_heat + stop_heat * progress_smooth_heat;
     scaling_cool = (1-progress_smooth_cool) * start_cool + stop_cool * progress_smooth_cool;
-
+    scaling_blow = (1-progress_smooth_blow) * start_blow + stop_blow * progress_smooth_blow;
+    
+    if i > blow_off_time
+        blow(:,1)=transpose(minP<scaling_blow);
+    else
+        blow(:,1)=transpose(zeros(length(blow),1));
+    end
+    
     cool_float = cool_float * (1-rho) + (maxP < scaling_cool .* (ctrl > 0)') * rho;
     cool = cool_float > 0.5;
     
@@ -153,6 +168,7 @@ for i = 1 : n
     
     for c = 1 : length(N)
         T(c,:) = T(c,1);
+        blow(c,:) = blow(c,1);
     end
 end
 
