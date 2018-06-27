@@ -4,7 +4,7 @@ function [correct, subopt, incorrect] = calculateStats(vec, N, mds)
     subopt = 0;
     incorrect = 0;
     
-    result = vec(end,:) > 35;
+    result = vec(end,:) > 34;
     final = zeros(size(result));
     for iNode = 1 : length(result)
         if result(iNode)
