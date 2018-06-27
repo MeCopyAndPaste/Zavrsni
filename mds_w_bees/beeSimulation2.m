@@ -1,8 +1,10 @@
 function [posD, posA, vel] = beeSimulation2(posD, posA, vel, T, draw, blow)
     
     global casu_pos
-    blow_radius_tg  = 4;
-    blow_radius_rad = 5;
+    blow_radius_tg  = 4.05;
+    blow_radius_rad = 4.5;
+   
+    
     % speed
     dist = 0.1;
     % rectangular arena approximation
@@ -32,7 +34,7 @@ function [posD, posA, vel] = beeSimulation2(posD, posA, vel, T, draw, blow)
     
     %disp('**********************************************************************************************')
     %fprintf('vel_vec     = [%f %f %f %f %f %f %f %f %f %f];\n', vel(1),vel(2),vel(3),vel(4),vel(5),vel(6),vel(7),vel(8),vel(9),vel(10));
-    %fprintf('vel2_vec    = [%f %f %f %f %f %f %f %f %f %f];\n', vel2(1),vel2(2),vel2(3),vel2(4),vel2(5),vel2(6),vel2(7),vel2(8),vel2(9),vel2(10));
+    %fprintf('vel2_vec    = [%f %f %f %f %f %f %f %f %f %f];\n', vel2(1),vel2(2),vel2(3),velF2(4),vel2(5),vel2(6),vel2(7),vel2(8),vel2(9),vel2(10));
     %fprintf('x0_vec      = [%f %f %f %f %f %f %f %f %f %f];\n', x(1),x(2),x(3),x(4),x(5),x(6),x(7),x(8),x(9),x(10));
     %fprintf('y0_vec      = [%f %f %f %f %f %f %f %f %f %f];\n', y(1),y(2),y(3),y(4),y(5),y(6),y(7),y(8),y(9),y(10));
     
@@ -48,7 +50,7 @@ function [posD, posA, vel] = beeSimulation2(posD, posA, vel, T, draw, blow)
         tg_DL = vec_a_DL + pi/2 * sign(tg_DL);
         tg_DL = mod(tg_DL, 2*pi);
         
-        %fprintf('tg_1L_vec    = [%f %f %f %f %f %f %f %f %f %f];\n', tg_DL(1),tg_DL(2),tg_DL(3),tg_DL(4),tg_DL(5),tg_DL(6),tg_DL(7),tg_DL(8),tg_DL(9),tg_DL(10));
+        %fprintf('tg_1L_vec    = [%f %f %f %f %f %f %f %f %f %f];\n', tg_DL(1),tg_DL(2),tg_FFDL(3),tg_DL(4),tg_DL(5),tg_DL(6),tg_DL(7),tg_DL(8),tg_DL(9),tg_DL(10));
         
         tg_coef_1L  = 0.5*( -(vec_a_AL < blow_radius_tg).*(1-(vec_a_AL./blow_radius_tg))); 
         tg_DL       = vel2 - tg_DL;
@@ -90,8 +92,13 @@ function [posD, posA, vel] = beeSimulation2(posD, posA, vel, T, draw, blow)
         %fprintf('rad_DD_vec   = [%f %f %f %f %f %f %f %f %f %f];\n', rad_DD(1),rad_DD(2),rad_DD(3),rad_DD(4),rad_DD(5),rad_DD(6),rad_DD(7),rad_DD(8),rad_DD(9),rad_DD(10))
         %fprintf('rad_D2_vec  = [%f %f %f %f %f %f %f %f %f %f];\n', rad_D2(1),rad_D2(2),rad_D2(3),rad_D2(4),rad_D2(5),rad_D2(6),rad_D2(7),rad_D2(8),rad_D2(9),rad_D2(10));
         
-    end    
-       
+    end
+    
+%     tg_DL  = tg_DL *0.75;
+%     rad_DL = rad_DL*0.75;
+%     tg_DD  = tg_DD *0.75;
+%     rad_DD = rad_DD*0.75;
+%        
  
     
     grad = - (T(left) - T(right) > 0) + (T(left) - T(right) < 0) + 0*(T(left)-T(right) == 0);
@@ -107,8 +114,7 @@ function [posD, posA, vel] = beeSimulation2(posD, posA, vel, T, draw, blow)
 %     random_angle = random_angle + phi_temp .* abs(rand(size(random_angle)));
     
     scale = exp(abs(T(left)-T(right))/10 - 1);
-    vel = vel + random_angle + (T(left) ~= T(right)) * phi_temp .* ...
-        (rand(size(random_angle))).^2 * scale + tg_DL + rad_DL + tg_DD + rad_DD;
+    vel = vel + random_angle + (T(left) ~= T(right)) * phi_temp .* (rand(size(random_angle))).^2 * scale + tg_DL + rad_DL + tg_DD + rad_DD;
     
     if vel < -pi
         vel = vel + 2 * pi;
