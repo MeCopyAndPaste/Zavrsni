@@ -35,6 +35,7 @@ start_heat = 0.1;
 stop_cool = 0.5;
 start_cool = 0.2;
 
+step_cool_modifier = ones(size(N));
 
 blowbuff = [];
 blow_start = [];
@@ -151,7 +152,7 @@ for i = 1 : n
 %     end
 
     progress_smooth_heat = 1 - exp(0.17 * (1 - 1 / (1 - min(1, 3 * i / n ))));
-    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n) )));
+    progress_smooth_cool = 1 - exp(0.85 * (1 - 1 / (1 - min(1, 2 * i / n))));
     %progress_smooth_blow = 1 - exp(0.5 * (1 - 1 / (1 - min(1, 2 * i / n ))));
     
     
@@ -191,10 +192,14 @@ for i = 1 : n
     heat_float = heat_float * (1-rho) + ((avgP > scaling_heat) .* ...
         (ctrl > 0)' & (cool == 0)) * rho;
     heat = heat_float > 0.5;
+   
 
     T(:,1) = min(36, T(:,1) + min(0.5, 0.05 * arenaCnt .* (heat')));
-    T(:,1) = max(26, T(:,1) - 0.03 * (cool'));% - arenaCnt == zeros(size(cool))));
-
+    
+    step_cool_modifier = step_cool_modifier + 2 * blow;    
+    T(:,1) = max(26, T(:,1) - 0.03.*step_cool_modifier(:,1).*(cool'));% - arenaCnt == zeros(size(cool))));
+    
+    step_cool_modifier = ones(size(N));
     vec(i,:) = T(:,1);
     
     for c = 1 : length(N)
@@ -203,17 +208,20 @@ for i = 1 : n
     end
     
 end
-%     ploton = 1;
-%     if ploton
-%     figure(99);
-%     hold on;
-%         for znj = 1 :length(N)
-%                     subplot(length(N),1, znj);
-%                     plot(1:n,blowbuff(1:n,znj),1:i,minPbuff(1:n,znj));
-% 
-%         end
-%     hold off;   
-%     end
+% ploton = 1;
+%      if ploton
+%      figure(99);
+%      clf;
+%      hold on;
+%          for znj = 1 :length(N)
+%                      subplot(length(N),1, znj);
+%                      plot(1:n,blowbuff(1:n,znj), 'b',1:i,minPbuff(1:n,znj), 'r');
+%  
+%          end
+%      hold off;   
+%      end
+% disp("Press any key to continue");
+% pause;
 pInt = pInt / n;
 
 end
