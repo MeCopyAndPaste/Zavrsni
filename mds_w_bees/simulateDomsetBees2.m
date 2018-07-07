@@ -42,6 +42,7 @@ blow_start = [];
 blow = zeros(size(N));
 
 minPbuff = [];
+avgPbuff = [];
 
 draw = 0;
 
@@ -161,7 +162,7 @@ for i = 1 : n
     %scaling_blow = (1-progress_smooth_blow) * start_blow + stop_blow * progress_smooth_blow;
     
     
-    
+%     avgPbuff  = [avgPbuff; avgP];
     minPbuff  = [minPbuff; minP];
     blowbuff  = [blowbuff; transpose(blow(:,1))];
     blow_start= [blow_start; 0*minP];
@@ -208,20 +209,37 @@ for i = 1 : n
     end
     
 end
+
 % ploton = 1;
 %      if ploton
 %      figure(99);
 %      clf;
 %      hold on;
+%          cvbr = 0;
 %          for znj = 1 :length(N)
 %                      subplot(length(N),1, znj);
-%                      plot(1:n,blowbuff(1:n,znj), 'b',1:i,minPbuff(1:n,znj), 'r');
-%  
-%          end
+%                      title(strcat(num2str(cvbr),'.'));
+%                      cvbr = cvbr+1;
+%          end 
+%      legend( "Odbijajuci stimulus", "Prosjek aktivnosti")
 %      hold off;   
 %      end
-% disp("Press any key to continue");
-% pause;
+%      if ploton
+%      figure(98);
+%      clf;
+%      hold on;
+%          cvbr = 0;
+%          for znj = 1 :length(N)
+%                      subplot(length(N),1, znj);
+%                      title(strcat(num2str(cvbr),'.'));
+%                      plot(1:n,blowbuff(1:n,znj), 'b', 1:i,minPbuff(1:n,znj), 'r', 1:i, 0.2*ones(1,i),'k--'); 
+%                      cvbr = cvbr+1;
+%          end 
+%      legend( "Odbijajuci stimulus", "Minimalna aktivnost", "Prag aktivnosti")
+%      hold off;   
+%      end
+%disp("Press any key to continue");
+%pause;
 pInt = pInt / n;
 
 end
